@@ -8,14 +8,13 @@ import config
 from torchvision.utils import save_image
 from scipy.stats import truncnorm
 
-# Print losses occasionally and print to tensorboard
 def plot_to_tensorboard(
     writer, loss_critic, loss_gen, real, fake, tensorboard_step
 ):
     writer.add_scalar("Loss Critic", loss_critic, global_step=tensorboard_step)
 
     with torch.no_grad():
-        # take out (up to) 8 examples to plot
+
         img_grid_real = torchvision.utils.make_grid(real[:8], normalize=True)
         img_grid_fake = torchvision.utils.make_grid(fake[:8], normalize=True)
         writer.add_image("Real", img_grid_real, global_step=tensorboard_step)
@@ -28,10 +27,8 @@ def gradient_penalty(critic, real, fake, alpha, train_step, device="cpu"):
     interpolated_images = real * beta + fake.detach() * (1 - beta)
     interpolated_images.requires_grad_(True)
 
-    # Calculate critic scores
     mixed_scores = critic(interpolated_images, alpha, train_step)
 
-    # Take the gradient of the scores with respect to the images
     gradient = torch.autograd.grad(
         inputs=interpolated_images,
         outputs=mixed_scores,
@@ -60,8 +57,6 @@ def load_checkpoint(checkpoint_file, model, optimizer, lr):
     model.load_state_dict(checkpoint["state_dict"])
     optimizer.load_state_dict(checkpoint["optimizer"])
 
-    # If we don't do this then it will just have learning rate of old checkpoint
-    # and it will lead to many hours of debugging \:
     for param_group in optimizer.param_groups:
         param_group["lr"] = lr
 
@@ -76,10 +71,6 @@ def seed_everything(seed=42):
     torch.backends.cudnn.benchmark = False
 
 def generate_examples(gen, steps, truncation=0.7, n=100):
-    """
-    Tried using truncation trick here but not sure it actually helped anything, you can
-    remove it if you like and just sample from torch.randn
-    """
     gen.eval()
     alpha = 1.0
     for i in range(n):

@@ -10,11 +10,9 @@ SAVE_MODEL = False
 LOAD_MODEL = False
 LEARNING_RATE = 1e-3
 BATCH_SIZES = [32, 32, 32, 16, 16, 16, 16, 8, 4]
-# in my project batch size will be determined by MULTIPLIED_IMGSIZE_BATCHSIZE_CHANNELS
-# BATCH_SIZES = [32, 32, 32, 16, 16, 16, 12, 4, 2]
 CHANNELS_IMG = 3
-Z_DIM = 256*2  # should be 512 in original paper
-IN_CHANNELS = 256*2  # should be 512 in original paper
+Z_DIM = 256  # 512 in original paper
+IN_CHANNELS = 256  # 512 in original paper
 CRITIC_ITERATIONS = 1
 LAMBDA_GP = 10
 PROGRESSIVE_EPOCHS = [30] * len(BATCH_SIZES)

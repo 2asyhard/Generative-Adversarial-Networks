@@ -1,6 +1,4 @@
 """
-Training of DCGAN network on MNIST dataset with Discriminator
-and Generator imported from models.py
 download celeb_dataset: https://www.kaggle.com/dataset/504743cb487a5aed565ce14238c6343b7d650ffd28c071f03f2fd9b25819e6c9/version/1
 """
 
@@ -61,17 +59,14 @@ gen.train()
 disc.train()
 
 for epoch in range(NUM_EPOCHS):
-    # Target labels not needed! <3 unsupervised
     for batch_idx, (real, _) in enumerate(dataloader):
         real = real.to(device)
         noise = torch.randn(BATCH_SIZE, NOISE_DIM, 1, 1).to(device)
         fake = gen(noise)
 
-        ### Train Discriminator: max log(D(x)) + log(1 - D(G(z)))
         disc_real = disc(real).reshape(-1)
         loss_disc_real = criterion(disc_real, torch.ones_like(disc_real))
-        disc_fake = disc(fake.detach()).reshape(-1) ##
-        #disc_fake = disc(fake).view(-1)
+        disc_fake = disc(fake.detach()).reshape(-1)
         loss_disc_fake = criterion(disc_fake, torch.zeros_like(disc_fake))
         loss_disc = (loss_disc_real + loss_disc_fake) / 2
         disc.zero_grad()
@@ -83,10 +78,8 @@ for epoch in range(NUM_EPOCHS):
         loss_gen = criterion(output, torch.ones_like(output))
         gen.zero_grad()
         loss_gen.backward(retain_graph=True)
-        #loss_gen.backward() ##
         opt_gen.step()
 
-        # Print losses occasionally and print to tensorboard
         if batch_idx % 100 == 0:
             print(
                 f"Epoch [{epoch}/{NUM_EPOCHS}] Batch {batch_idx}/{len(dataloader)} \

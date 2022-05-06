@@ -7,10 +7,8 @@ def gradient_penalty(critic, real, fake, device="cpu"):
     alpha = torch.rand((BATCH_SIZE, 1, 1, 1)).repeat(1, C, H, W).to(device)
     interpolated_images = real * alpha + fake * (1 - alpha)
 
-    # Calculate critic scores
     mixed_scores = critic(interpolated_images)
 
-    # Take the gradient of the scores with respect to the images
     gradient = torch.autograd.grad(
         inputs=interpolated_images,
         outputs=mixed_scores,
